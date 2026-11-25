@@ -17,3 +17,18 @@ cd stratagas-ne
 npm install
 npm run dev
 ```
+
+## Deploy to Cloudflare
+### Option A: Cloudflare Pages (Git Integration)
+- **Root directory:** `stratagas-ne`
+- **Build command:** `npm run build`
+- **Build output directory:** `dist`
+
+### Option B: CLI via Wrangler
+```bash
+cd stratagas-ne
+npx wrangler login
+npm run deploy        # Cloudflare Workers Static Assets
+# or
+npm run deploy:pages  # Cloudflare Pages
+```

@@ -9,6 +9,8 @@ import {
   Flame,
   AlertTriangle,
   CheckCircle2,
+  BookOpen,
+  FileCode2,
 } from 'lucide-react';
 import {
   WELLHEAD_NODES,
@@ -26,6 +28,7 @@ import {
 import { BasinMap } from './components/BasinMap';
 import { BreakEvenChart } from './components/Charts';
 import { ProcessTwin } from './components/ProcessTwin';
+import { TutorialModal, TechnicalDocsModal } from './components/InfoModals';
 
 type TabKey = 'gis' | 'sizing' | 'twin' | 'dispatch';
 
@@ -52,6 +55,8 @@ export function App() {
   });
 
   const [lelSpikeTest, setLelSpikeTest] = useState(false);
+  const [tutorialOpen, setTutorialOpen] = useState(false);
+  const [techDocsOpen, setTechDocsOpen] = useState(false);
 
   const handleSelectWell = (w: WellheadNode) => {
     setSelectedWellId(w.id);
@@ -99,11 +104,17 @@ export function App() {
         <div className="brand">
           <span className="brand-badge">NESFIC-I-03</span>
           <div>
-            <h1>StrataGas NE — Marginal Gas Monetisation & Virtual Pipeline OS</h1>
-            <p>Assam-Arakan Basin · Small-Scale Liquefaction & Micro-Conversion Digital Twin</p>
+            <h1>StrataGas NE — Marginal Gas Monetisation &amp; Virtual Pipeline OS</h1>
+            <p>
+              Assam-Arakan Basin · Small-Scale Liquefaction &amp; Micro-Conversion ·{' '}
+              <strong style={{ color: '#5eead4' }}>Lead Applicant: Kalyanjit Hatibaruah</strong>
+            </p>
           </div>
         </div>
         <div className="topbar-actions">
+          <button className="btn btn-outline" onClick={() => setTutorialOpen(true)}>
+            <BookOpen size={15} /> Tutorial
+          </button>
           <button className="btn btn-outline" onClick={() => window.print()}>
             <Printer size={15} /> Print / Export Dossier
           </button>
@@ -655,6 +666,26 @@ export function App() {
           )}
         </main>
       </div>
+
+      {/* Footer */}
+      <footer className="app-footer">
+        <div className="footer-left">
+          <span>© {new Date().getFullYear()} <strong>Flugelsoft Labs</strong>. All rights reserved.</span>
+          <span>·</span>
+          <span>Lead Applicant: <strong>Kalyanjit Hatibaruah</strong></span>
+        </div>
+        <div className="footer-links">
+          <button className="footer-link" onClick={() => setTutorialOpen(true)}>
+            <BookOpen size={14} /> How to Use
+          </button>
+          <button className="footer-link" onClick={() => setTechDocsOpen(true)}>
+            <FileCode2 size={14} /> Technical Documents
+          </button>
+        </div>
+      </footer>
+
+      <TutorialModal open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
+      <TechnicalDocsModal open={techDocsOpen} onClose={() => setTechDocsOpen(false)} />
     </div>
   );
 }

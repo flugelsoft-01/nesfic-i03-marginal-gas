@@ -1,0 +1,8 @@
+{
+  "name": "nesfic-i03-marginal-gas",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix stratagas-ne run dev",
+    "build": "npm --prefix stratagas-ne ci && npm --prefix stratagas-ne run build"
+  }
+}
