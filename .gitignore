@@ -1,0 +1,6 @@
+node_modules/
+stratagas-ne/node_modules/
+stratagas-ne/dist/
+dist/
+.DS_Store
+*.log
