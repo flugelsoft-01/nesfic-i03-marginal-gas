@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   MapPin,
   BarChart3,
@@ -32,6 +32,20 @@ import { TutorialModal, TechnicalDocsModal } from './components/InfoModals';
 
 type TabKey = 'gis' | 'sizing' | 'twin' | 'dispatch';
 
+const TAB_SLUGS: Record<TabKey, string> = {
+  gis: 'basin-demand-gis-assam-arakan',
+  sizing: 'techno-economic-sizing-sslng',
+  twin: 'process-digital-twin-liquefaction',
+  dispatch: 'virtual-pipeline-scada-mrv',
+};
+
+const TAB_TITLES: Record<TabKey, string> = {
+  gis: 'Basin & Demand GIS (Assam-Arakan) — StrataGas NE',
+  sizing: 'Techno-Economic Sizing (SSLNG vs CNG & Micro-GTL) — StrataGas NE',
+  twin: 'Process Digital Twin (Modular Liquefaction) — StrataGas NE',
+  dispatch: 'Virtual Pipeline & SCADA/MRV — StrataGas NE',
+};
+
 export function App() {
   const [activeTab, setActiveTab] = useState<TabKey>('gis');
   const [selectedWellId, setSelectedWellId] = useState<string>(WELLHEAD_NODES[0].id);
@@ -57,6 +71,34 @@ export function App() {
   const [lelSpikeTest, setLelSpikeTest] = useState(false);
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [techDocsOpen, setTechDocsOpen] = useState(false);
+
+  useEffect(() => {
+    const syncFromHash = () => {
+      const h = window.location.hash.replace('#', '');
+      if (h === 'how-to-use-tutorial') {
+        setTutorialOpen(true);
+        return;
+      }
+      if (h === 'technical-documents-architecture') {
+        setTechDocsOpen(true);
+        return;
+      }
+      const matched = (Object.keys(TAB_SLUGS) as TabKey[]).find((k) => TAB_SLUGS[k] === h);
+      if (matched) setActiveTab(matched);
+    };
+    syncFromHash();
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
+  }, []);
+
+  useEffect(() => {
+    document.title = TAB_TITLES[activeTab];
+  }, [activeTab]);
+
+  const navigateTab = (tab: TabKey) => {
+    setActiveTab(tab);
+    window.history.replaceState(null, '', `#${TAB_SLUGS[tab]}`);
+  };
 
   const handleSelectWell = (w: WellheadNode) => {
     setSelectedWellId(w.id);
@@ -112,9 +154,17 @@ export function App() {
           </div>
         </div>
         <div className="topbar-actions">
-          <button className="btn btn-outline" onClick={() => setTutorialOpen(true)}>
+          <a
+            href="#how-to-use-tutorial"
+            className="btn btn-outline"
+            onClick={(e) => {
+              e.preventDefault();
+              setTutorialOpen(true);
+              window.history.replaceState(null, '', '#how-to-use-tutorial');
+            }}
+          >
             <BookOpen size={15} /> Tutorial
-          </button>
+          </a>
           <button className="btn btn-outline" onClick={() => window.print()}>
             <Printer size={15} /> Print / Export Dossier
           </button>
@@ -123,30 +173,46 @@ export function App() {
 
       {/* Navigation Tabs */}
       <nav className="nav-tabs" aria-label="Application Modules">
-        <button
+        <a
+          href={`#${TAB_SLUGS.gis}`}
           className={`tab-btn ${activeTab === 'gis' ? 'active' : ''}`}
-          onClick={() => setActiveTab('gis')}
+          onClick={(e) => {
+            e.preventDefault();
+            navigateTab('gis');
+          }}
         >
-          <MapPin size={16} /> 1. Basin & Demand GIS
-        </button>
-        <button
+          <MapPin size={16} /> 1. Basin &amp; Demand GIS
+        </a>
+        <a
+          href={`#${TAB_SLUGS.sizing}`}
           className={`tab-btn ${activeTab === 'sizing' ? 'active' : ''}`}
-          onClick={() => setActiveTab('sizing')}
+          onClick={(e) => {
+            e.preventDefault();
+            navigateTab('sizing');
+          }}
         >
           <BarChart3 size={16} /> 2. Techno-Economic Sizing
-        </button>
-        <button
+        </a>
+        <a
+          href={`#${TAB_SLUGS.twin}`}
           className={`tab-btn ${activeTab === 'twin' ? 'active' : ''}`}
-          onClick={() => setActiveTab('twin')}
+          onClick={(e) => {
+            e.preventDefault();
+            navigateTab('twin');
+          }}
         >
           <Cpu size={16} /> 3. Process Digital Twin
-        </button>
-        <button
+        </a>
+        <a
+          href={`#${TAB_SLUGS.dispatch}`}
           className={`tab-btn ${activeTab === 'dispatch' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dispatch')}
+          onClick={(e) => {
+            e.preventDefault();
+            navigateTab('dispatch');
+          }}
         >
-          <Truck size={16} /> 4. Virtual Pipeline & SCADA/MRV
-        </button>
+          <Truck size={16} /> 4. Virtual Pipeline &amp; SCADA/MRV
+        </a>
       </nav>
 
       {/* Main Content Layout */}
@@ -675,12 +741,28 @@ export function App() {
           <span>Lead Applicant: <strong>Kalyanjit Hatibaruah</strong></span>
         </div>
         <div className="footer-links">
-          <button className="footer-link" onClick={() => setTutorialOpen(true)}>
+          <a
+            href="#how-to-use-tutorial"
+            className="footer-link"
+            onClick={(e) => {
+              e.preventDefault();
+              setTutorialOpen(true);
+              window.history.replaceState(null, '', '#how-to-use-tutorial');
+            }}
+          >
             <BookOpen size={14} /> How to Use
-          </button>
-          <button className="footer-link" onClick={() => setTechDocsOpen(true)}>
+          </a>
+          <a
+            href="#technical-documents-architecture"
+            className="footer-link"
+            onClick={(e) => {
+              e.preventDefault();
+              setTechDocsOpen(true);
+              window.history.replaceState(null, '', '#technical-documents-architecture');
+            }}
+          >
             <FileCode2 size={14} /> Technical Documents
-          </button>
+          </a>
         </div>
       </footer>
 
